@@ -19,13 +19,3 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
     delays = sorted(results)
 
     return delays
-
-
-async def main():
-    n = 5
-    max_delay = 3
-    delays = await wait_n(n, max_delay)
-    print(f"Delays: {delays}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
