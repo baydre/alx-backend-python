@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 """
 Task_4: alter "wait_n" into "task_wait_n"
 and call task_wait_random.
