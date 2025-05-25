@@ -1,4 +1,3 @@
-
 ## 🌀 Python Generators Project
 
 Welcome to the **Python Generators** project!
@@ -25,6 +24,7 @@ This repository demonstrates the practical use of Python generators for efficien
 ├── seed.py                # Create database, tables, and seed data
 ├── 0-stream_users.py      # Stream user data row by row
 ├── 1-batch_processing.py  # Process user data in batches
+├── 2-lazy_paginate.py     # Implement lazy loading pagination
 ├── 2-lazy_paginate.py     # Implement lazy loading pagination
 ├── user_data.csv          # CSV file for seeding database
 ├── 0-main.py              # Test script for streaming users
@@ -85,12 +85,13 @@ python3 0-main.py
 
 ### 🌀 Project Scripts Overview
 
-| File                    | Description                           | How to Run          |
-| ----------------------- | ------------------------------------- | ------------------- |
-| `0-stream_users.py`     | Stream all user data row by row       | `python3 1-main.py` |
-| `1-batch_processing.py` | Process user data in batches          | `python3 2-main.py` |
-| `2-lazy_paginate.py`    | Load user data lazily with pagination | `python3 3-main.py` |
-| `seed.py`               | Setup database and seed data from CSV | `python3 0-main.py` |
+| File                    | Description                                    | How to Run          |
+| ----------------------- | ---------------------------------------------- | ------------------- |
+| `0-stream_users.py`     | Stream all user data row by row                | `python3 1-main.py` |
+| `1-batch_processing.py` | Process user data in batches                   | `python3 2-main.py` |
+| `2-lazy_paginate.py`    | Load user data lazily with pagination          | `python3 3-main.py` |
+| `4-stream_ages.py`      | Memory-efficient average age calculation       | `python3 4-stream_ages.py` |
+| `seed.py`               | Setup database and seed data from CSV          | `python3 0-main.py` |
 
 ---
 
@@ -118,6 +119,12 @@ python3 0-main.py
 Page 1:
 {'user_id': '...', 'name': 'John Doe', ...}
 ...
+```
+
+#### Memory-Efficient Average Age Calculation:
+
+```bash
+Average age of users: 32.5
 ```
 
 ---
