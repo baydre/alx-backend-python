@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from .models import User, Conversation, Message
-from rest_framework.serializers import CharField, SerializerMethodField, ValidationError
 
 class UserSerializer(serializers.ModelSerializer):
-    display_name = CharField(source='get_full_name', read_only=True)
+    display_name = serializers.CharField(source='get_full_name', read_only=True)
 
     class Meta:
         model = User
@@ -11,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
-    sender_email = SerializerMethodField()
+    sender_email = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -30,5 +29,5 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def validate_participants(self, value):
         if not value:
-            raise ValidationError("A conversation must have at least one participant.")
+            raise serializers.ValidationError("A conversation must have at least one participant.")
         return value
