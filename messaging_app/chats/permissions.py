@@ -7,14 +7,17 @@ class IsParticipantOfConversation(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        # Only allow authenticated users
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         # For Conversation objects
         if hasattr(obj, 'participants'):
+            if request.method in ['PUT', 'PATCH', 'DELETE']:
+                return request.user in obj.participants.all()
             return request.user in obj.participants.all()
         # For Message objects
         if hasattr(obj, 'conversation'):
+            if request.method in ['PUT', 'PATCH', 'DELETE']:
+                return request.user in obj.conversation.participants.all()
             return request.user in obj.conversation.participants.all()
         return False
