@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.db.models import Prefetch
 from .models import Message, Notification, MessageHistory
 
 User = get_user_model()
@@ -24,3 +25,25 @@ def delete_user_related_data(sender, instance, **kwargs):
     Notification.objects.filter(user=instance).delete()
     MessageHistory.objects.filter(message__sender=instance).delete()
     MessageHistory.objects.filter(message__receiver=instance).delete()
+
+@login_required
+def threaded_conversation(request, message_id):
+    root_message = Message.objects.select_related('sender', 'receiver').prefetch_related(
+        Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
+    ).get(pk=message_id, parent_message__isnull=True)
+
+    def get_replies(message):
+        replies = message.replies.all()
+        return [
+            {
+                'message': reply,
+                'replies': get_replies(reply)
+            }
+            for reply in replies
+        ]
+
+    context = {
+        'root_message': root_message,
+        'thread': get_replies(root_message)
+    }
+    return render(request, 'messaging/threaded_conversation.html', context)

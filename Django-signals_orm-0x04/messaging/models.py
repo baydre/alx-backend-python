@@ -14,6 +14,13 @@ class Message(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='replies',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f"From {self.sender} to {self.receiver}: {self.content[:20]}"
