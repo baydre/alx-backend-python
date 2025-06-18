@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, logout
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.shortcuts import render
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.db.models import Prefetch
@@ -47,3 +46,11 @@ def threaded_conversation(request, message_id):
         'thread': get_replies(root_message)
     }
     return render(request, 'messaging/threaded_conversation.html', context)
+
+@login_required
+def user_sent_messages(request):
+    # Only messages sent by the logged-in user
+    messages = Message.objects.filter(sender=request.user).select_related('receiver').prefetch_related(
+        Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
+    )
+    return render(request, 'messaging/user_sent_messages.html', {'messages': messages})
