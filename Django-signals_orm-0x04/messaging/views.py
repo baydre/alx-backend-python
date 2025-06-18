@@ -54,3 +54,10 @@ def user_sent_messages(request):
         Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
     )
     return render(request, 'messaging/user_sent_messages.html', {'messages': messages})
+
+from .models import Message
+
+@login_required
+def unread_inbox(request):
+    unread_messages = Message.unread.for_user(request.user)
+    return render(request, 'messaging/unread_inbox.html', {'unread_messages': unread_messages})
