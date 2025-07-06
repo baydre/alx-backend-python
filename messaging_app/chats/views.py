@@ -20,6 +20,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
