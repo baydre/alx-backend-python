@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# kurbeScript - Kubernetes Cluster Setup and Verification Script
+# Author: baydre_africa
+# Description: Sets up local Kubernetes cluster using Minikube
+
+set -e  # Exit on any error
+
+echo "🚀 Starting Kubernetes Cluster Setup..."
+echo "========================================="
+
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to print colored output
+print_status() {
+    echo -e "\033[1;32m✅ $1\033[0m"
+}
+
+print_error() {
+    echo -e "\033[1;31m❌ $1\033[0m"
+}
+
+print_info() {
+    echo -e "\033[1;34mℹ️  $1\033[0m"
+}
+
+# Step 1: Check if Minikube is installed
+echo "Step 1: Checking Minikube installation..."
+if ! command_exists minikube; then
+    print_error "Minikube is not installed!"
+    echo "Please install Minikube first:"
+    echo "  curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
+    echo "  sudo install minikube-linux-amd64 /usr/local/bin/minikube"
+    exit 1
+fi
+print_status "Minikube is installed"
+
+# Step 2: Check if kubectl is installed
+echo "Step 2: Checking kubectl installation..."
+if ! command_exists kubectl; then
+    print_error "kubectl is not installed!"
+    echo "Installing kubectl..."
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    sudo mv kubectl /usr/local/bin/
+    print_status "kubectl installed successfully"
+else
+    print_status "kubectl is already installed"
+fi
+
+# Step 3: Start Minikube cluster
+echo "Step 3: Starting Kubernetes cluster..."
+print_info "This may take a few minutes on first run..."
+
+# Check if cluster is already running
+if minikube status | grep -q "Running"; then
+    print_status "Minikube cluster is already running"
+else
+    print_info "Starting new Minikube cluster..."
+    minikube start --driver=docker --cpus=2 --memory=2048mb
+    print_status "Kubernetes cluster started successfully"
+fi
+
+# Step 4: Verify cluster is running
+echo "Step 4: Verifying cluster status..."
+echo "----------------------------------------"
+kubectl cluster-info
+echo "----------------------------------------"
+
+# Check if cluster-info command was successful
+if [ $? -eq 0 ]; then
+    print_status "Cluster verification successful"
+else
+    print_error "Cluster verification failed"
+    exit 1
+fi
+
+# Step 5: Retrieve available pods
+echo "Step 5: Retrieving available pods..."
+echo "----------------------------------------"
+print_info "Pods in all namespaces:"
+kubectl get pods --all-namespaces
+
+echo ""
+print_info "Pods in default namespace:"
+kubectl get pods
+
+echo ""
+echo "========================================="
+print_status "Kubernetes cluster setup completed!"
+echo ""
+print_info "Useful commands:"
+echo "  • minikube dashboard    - Open Kubernetes dashboard"
+echo "  • kubectl get nodes     - View cluster nodes"
+echo "  • kubectl get services  - View services"
+echo "  • minikube stop        - Stop the cluster"
+echo "  • minikube delete      - Delete the cluster"
+echo "========================================="
